@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f4eb">
+  <title>EstuLanches · pausa gostosa</title>
+  <link rel="stylesheet" href="/css/paleta.css">
+  <link rel="stylesheet" href="/css/estrutura.css">
+  <link rel="stylesheet" href="/css/componentes.css">
+</head>
+<body>
+  <header class="masthead">
+    <a class="brand" href="/" aria-label="EstuLanches início"><span class="brand-mark">e</span><span>estu<span class="brand-accent">lanches</span><small>UM INTERVALO COM MAIS SABOR</small></span></a>
+    <div id="session-area"><button class="button button-dark" id="login-open">Entrar</button></div>
+  </header>
+  <main>
+    <section class="welcome">
+      <div class="welcome-copy"><p class="eyebrow">CANTINA · CARDÁPIO DE HOJE</p><h1>Deu intervalo.<br><span>Deu fome.</span></h1><p>Escolha seu lanche favorito e deixe a fila para depois.</p><a class="jump-link" href="#menu">Explorar o cardápio <span>↓</span></a></div>
+      <div class="welcome-sticker" aria-label="Feito com carinho"><span>PAUSA</span><strong>🍊</strong><span>GOSTOSA</span></div>
+      <div class="welcome-note">COMIDA BOA,<br>ENCONTRO MELHOR.</div>
+    </section>
+
+    <section id="auth-panel" class="auth-card hidden">
+      <div class="section-top"><div><p class="eyebrow">SUA CONTA</p><h2 id="auth-title">Que bom ter você por aqui.</h2></div><button class="quiet-button" id="auth-close">Fechar ×</button></div>
+      <form id="auth-form" class="fields"><label class="hidden" id="name-wrap">Seu nome<input id="name" autocomplete="name"></label><label>E-mail escolar<input id="email" type="email" required autocomplete="email"></label><label>Senha<input id="password" type="password" required minlength="8" autocomplete="current-password"></label><button class="button button-dark" id="auth-submit">Entrar na conta</button></form>
+      <p class="switch-line" id="auth-switch"></p>
+    </section>
+
+    <div id="message" class="notice hidden" role="status"></div>
+    <section id="menu" class="menu-section">
+      <div class="section-top"><div><p class="eyebrow">FEITO FRESQUINHO</p><h2>O que vai ser?</h2></div><button class="button button-light hidden" id="orders-open">Meus pedidos ↗</button></div>
+      <div id="products" class="menu-grid"><p class="muted">Abrindo o cardápio…</p></div>
+    </section>
+
+    <section id="admin-panel" class="workbench hidden">
+      <div class="section-top"><div><p class="eyebrow">PAINEL DA CANTINA</p><h2>Deixe tudo pronto.</h2></div></div>
+      <form id="product-form" class="fields product-fields"><label>Nome do produto<input id="product-name" required maxlength="120"></label><label>Uma descrição curta<input id="product-description" maxlength="300"></label><label>Preço em reais<input id="product-price" type="number" min="0" step="0.01" required></label><button class="button button-dark">Adicionar ao cardápio</button></form>
+      <div class="section-top orders-title"><div><p class="eyebrow">COZINHA EM MOVIMENTO</p><h2>Pedidos recebidos</h2></div><button class="quiet-button" id="refresh-admin">Atualizar ↻</button></div><div id="admin-orders" class="order-list"></div>
+    </section>
+
+    <section id="orders-panel" class="workbench hidden"><div class="section-top"><div><p class="eyebrow">SEU HISTÓRICO</p><h2>Pedidos na cantina.</h2></div><button class="quiet-button" id="orders-close">Fechar ×</button></div><div id="orders-list" class="order-list"></div></section>
+    <footer><a class="brand footer-brand" href="/"><span class="brand-mark">e</span><span>estulanches<small>O INTERVALO COMEÇA AQUI</small></span></a><span>Cantina da escola · Até o próximo recreio!</span></footer>
+  </main>
+  <script src="/cantina.js" defer></script>
+</body>
+</html>

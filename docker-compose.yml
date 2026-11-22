@@ -1,0 +1,98 @@
+name: estulanches-alternativo
+
+services:
+  cantina:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: servico
+    init: true
+    restart: on-failure:5
+    stop_grace_period: 20s
+    ports:
+      - "127.0.0.1:3010:3000"
+    environment:
+      PORT: "3000"
+      DATABASE_URL: postgresql://${POSTGRES_USER:?copie .env.example para .env}:${POSTGRES_PASSWORD:?configure POSTGRES_PASSWORD no .env}@cofre-dados:5432/${POSTGRES_DB:?configure POSTGRES_DB no .env}
+      JWT_SECRET: ${JWT_SECRET:?configure JWT_SECRET no .env}
+      ADMIN_NAME: ${ADMIN_NAME:?configure ADMIN_NAME no .env}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?configure ADMIN_EMAIL no .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?configure ADMIN_PASSWORD no .env}
+    depends_on:
+      cofre-dados:
+        condition: service_healthy
+    networks:
+      - entrada_cantina
+      - rede_cantina
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3000/api/saude').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))
+      interval: 12s
+      timeout: 4s
+      retries: 4
+      start_period: 18s
+    logging:
+      driver: json-file
+      options:
+        max-size: "8m"
+        max-file: "4"
+
+  cofre-dados:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?configure POSTGRES_USER no .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?configure POSTGRES_PASSWORD no .env}
+      POSTGRES_DB: ${POSTGRES_DB:?configure POSTGRES_DB no .env}
+    volumes:
+      - type: volume
+        source: dados_cantina
+        target: /var/lib/postgresql/data
+      - type: bind
+        source: ./db/schema.sql
+        target: /docker-entrypoint-initdb.d/01-schema.sql
+        read_only: true
+    networks:
+      - rede_cantina
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 6s
+      timeout: 4s
+      retries: 12
+      start_period: 8s
+    logging:
+      driver: json-file
+      options:
+        max-size: "8m"
+        max-file: "4"
+
+  validacao:
+    profiles: ["testes"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: verificacao
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:?configure POSTGRES_USER no .env}:${POSTGRES_PASSWORD:?configure POSTGRES_PASSWORD no .env}@cofre-dados:5432/${POSTGRES_DB:?configure POSTGRES_DB no .env}
+      JWT_SECRET: ${JWT_SECRET:?configure JWT_SECRET no .env}
+    depends_on:
+      cofre-dados:
+        condition: service_healthy
+    networks:
+      - rede_cantina
+    command: ["npm", "run", "test:integration"]
+    restart: "no"
+
+networks:
+  entrada_cantina:
+    name: estulanches_acesso_local
+  rede_cantina:
+    name: estulanches_redelocal
+    internal: true
+
+volumes:
+  dados_cantina:
+    name: estulanches-alternativo_cantina_data
